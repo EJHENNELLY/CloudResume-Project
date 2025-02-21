@@ -25,8 +25,40 @@ Once you have your basic resume ready to deploy we are going to follow these ste
 6. Create a way to allow your site and database to communicate with each other
 7. Test everything to make sure it works
 
-STEP 1:
+STEP 1: Upload your website to an S3 Bucket
 ---
+* Login to the AWS console and navigate to S3.
+* Click "create bucket". Enter your bucket name (must be unique). You can leave everything else on the default settings. We are keeping the public access to this bucket as "block all public access". (We will use CloudFront to access the bucket later). Proceed with creating the bucket.
+* Click on your bucket and upload your website files. Leave default settings and proceed to upload.
+  
+![Screenshot (73)](https://github.com/user-attachments/assets/baf43fae-15de-4a0a-b9a5-0063910f8938)
+//Remember these are not publicly accessible so if you are trying to reach the site with the url it will say access denied. You can click "open" in the console to access it if you want to make sure it worked.
+
+* Now we want to allow the public to access the bucket so navigate to CloudFront and click "create a cloudfront distribution"
+
+![Screenshot (74)](https://github.com/user-attachments/assets/91d0963b-f0e9-4684-9b59-d1b563001dbe)
+
+* Choose your S3 bucket you just created as the origin domain.
+* Choose the recommended "origin access control setting". This gives cloudfront access to the objects in the bucket but nothing else.
+* You will need to create an origin access control using the "create OAC" button. You can leave everything default and create.
+
+![Screenshot (75)](https://github.com/user-attachments/assets/27ad1e53-c0b1-4951-8a3e-739ab6015c92)
+![Screenshot (76)](https://github.com/user-attachments/assets/9f7d00cb-1618-43b7-9953-34f3f06128b5)
+
+* Scrolling down you do not have to enable the web application firewall right now.
+* Scroll down and for the default root object, use your index.html
+* Click Create Distribution.
+* It will likely tell you that you need to update your S3 bucket policy and will give you a prompt to copy a policy
+
+![Screenshot (77)](https://github.com/user-attachments/assets/14cce2b5-89c1-4c10-90eb-82feb0556b79)
+
+* Navigate back to S3 and go to your bucket and click on "Permissions" scroll down to your "bucket policy and click edit and paste in the policy you copied.
+
+![Screenshot (78)](https://github.com/user-attachments/assets/1198b7ab-21a5-4b1f-b751-98fd2e425255)
+
+* Now you can navigate back to cloudfront and your distribution should be ready. You can copy the "distribution domain name" search it and you should have access!
+
+![Screenshot (80)](https://github.com/user-attachments/assets/7df530de-0b79-4a8b-bd77-bf6f22d561b4)
 
 
 
