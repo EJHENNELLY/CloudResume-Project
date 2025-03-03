@@ -3,11 +3,14 @@ Deploying my resume with AWS
 
 I have been working to transition into a tech career for some time now and like most people, I spent tons of time, money, and effort stressing over certifications that I was led to believe would be the key to me landing a role in the dynamic tech industry. After having achieved the certifications that I thought would change everything, I started applying to jobs and began realizing that while these certs showed I was a quick-learner and were "proof" that I had the necessary knowledge to do the job, I still did not have much to offer in terms of anything that I had built. My cybersecurity and security engineer certifications mostly just allowed me to show screen shots of walk throughs that I had done during the course of my learning. So, I decided to create something to show to hiring managers. But what? I hate to admit that it took me sometime to determine what to create. In the end, it seemed fairly obvious.... A resume.
 
+---
+---
+
 In this project, I am going to walk through the steps I took to create this resume and the things I learned along the way.
 
 I will use a number of programming languages and AWS services in this project:
 Programming = HTML, CSS, Javascript, Python,
-AWS Services = S3, Route 53, CloudFront, DynamoDB, API-Gateway, Lambda 
+AWS Services = S3, Route 53, CloudFront, Certificate Manager
 
 First things first, you need a few things to get started:
 - An AWS account with access to the console
@@ -17,13 +20,10 @@ First things first, you need a few things to get started:
 If you do not have a resume ready to deploy, I suggest searching on youtube or medium for instruction/inspiration! It can be very basic at first and you can update it later.
 
 Once you have your basic resume ready to deploy we are going to follow these steps:
-1. Upload your resume to AWS S3 bucket to host as a static website
+1. Upload your resume to AWS S3 bucket and configure Cloudfront to point to your bucket
 2. Use Route 53 to point a custom DNS domain name to your site
-3. Secure your URL using HTTPS by utilizing CloudFront
-4. Create a Visitor counter so you can see how many people access the site (will be helpful while networking on job hunt)
-5. Store the visitor data
-6. Create a way to allow your site and database to communicate with each other
-7. Test everything to make sure it works
+3. Secure your URL using HTTPS
+   
 
 STEP 1: Upload your website to an S3 Bucket
 ---
@@ -88,4 +88,32 @@ STEP 2: Create a custom domain with Route 53
   
 ![Screenshot (69)](https://github.com/user-attachments/assets/a52dcfb2-f16b-45dd-88a7-8dc4de743d54)
 
-So there you have it. We are all set with our first record.
+So there you have it. We are all set with our first record. Now we will use records to easily navigate to our resume.
+
+Click create record. -> record type = A -> click alias and choose s3 as your endpoint. Select the region your s3 are hosted in.
+Your endpoint should show up in the drop down menu. If not, it might be because your endpoint is different then your domain name. 
+Create Record.
+Now you can look up your domain name and it should navigate to your site!
+
+
+STEP 3: Secure your site!
+Open up a new tab in the console and navigate to certificate manager. -> Certificates -> Request certificate -> Request public certificate.
+Type in your domain name from route 53. choose DNS validation. Default everything else and then request.
+Next scroll down to "Domains" and select "create records in route 53" and click "Create records". This will create you a new CNAME record in Route 53.
+Once your certificate request is successful navigate to cloudfront.
+Click on your distribution -> scroll to settings and click "edit". When you get to "alternate domain name" click add and enter your domain name.
+Scroll down to custom SSL certificate and choose the certificate you just created and save changes.
+If you navigate to your cloudfront distribution domain name it should navigate to your site and you will notice it is now secure and shows the lock.
+
+![Screenshot (83)](https://github.com/user-attachments/assets/83b8c1ce-e7ca-4b40-a177-c72e5baf5d42)
+
+The last thing we need to do is update our A record to go through cloudfront. 
+Navigate back to Cloudfront and go to your "A" record. -> edit record -> Change the alias from the s3 website to your cloudfront distribution and save.
+
+There you have it. Your resume is now posted online and is secure using HTTPS!
+
+
+
+Last last activity you need to do is make sure that you delete the resources if you do not want to keep your website deployed. 
+
+
